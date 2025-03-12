@@ -1,0 +1,132 @@
+{% extends 'index.html' %}
+
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="container vh-100">
+    <ul class="list-group mt-5">
+        <li class="list-group-item d-flex justify-content-center" id="addItemButton">
+            <button class="btn btn-link "><a class="nav-link text-secondary" > Add Item</a></button>
+        </li>
+        <li class="list-group-item d-flex justify-content-center" id="removeItemButton">
+            <button class="btn btn-link"><a class="nav-link text-secondary" > RemoveItem</a></button>
+        </li>
+        <li class="list-group-item d-flex justify-content-center" id="addUserButton">
+            <button class="btn btn-link"><a class="nav-link text-secondary" > Add User</a></button>
+        </li>
+        <li class="list-group-item d-flex justify-content-center" id="removeUserButton">
+            <button class="btn btn-link"><a class="nav-link text-secondary" > Remove User</a></button>
+        </li>
+    </ul>
+
+    <div class="container mt-5 pt-2">
+        <h2>Remove User</h2>
+        <form method="post" action="{{ url_for('main.delete_users') }}"">
+            {% for user in users %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="user_id" value="{{ user['_id'] }}" >
+                <label class="form-check-label" for="defaultCheck1">
+                    {{ user['username'] }}
+                </label>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-secondary mt-4">Delete</button>
+        </form>
+    </div>
+</div>
+
+
+  <!-- Modal For Users -->
+<div class="modal fade" id="addUserModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add User</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
+                <!-- <span aria-hidden="true">&times;</span> -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('main.register') }}"class="border border-primary p-4  rounded border-5">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="username" name="username" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter Username">
+                    
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password"  name="password" class="form-control" id="password" placeholder="Password">
+                        <small id="emailHelp" class="form-text text-muted">Create User as an Administrator!</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4">Create</button>
+                </form>
+                <div class="modal-footer">
+                    <button id="closeAddUserModal" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal For Item -->
+<div class="modal fade" id="addItemModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Item</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"> -->
+                <!-- <span aria-hidden="true">&times;</span> -->
+            </div>
+            <div class="modal-body">
+                <div class="modal-footer">
+                    <button id="closeAddItemModal" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Get the button and modal by ID
+        const addUserButton = document.getElementById('addUserButton');
+        const addUsermodalElement = document.getElementById('addUserModalCenter');
+        const closeAddUserButton = document.getElementById('closeAddUserModal');
+        
+
+        const userModal = new bootstrap.Modal(addUsermodalElement);
+
+        addUserButton.addEventListener('click', function() {
+            userModal.show();  
+        });
+
+        closeAddUserButton.addEventListener('click', function() {
+            userModal.hide();
+        });
+
+        const addItemButton = document.getElementById('addItemButton');
+        const addItemmodalElement = document.getElementById('addItemModalCenter');
+        const closeAddItemButton = document.getElementById('closeAddItemModal');
+        
+
+        const itemModal = new bootstrap.Modal(addItemmodalElement);
+
+        addItemButton.addEventListener('click', function(){
+            itemModal.show();
+        });
+
+        closeAddItemButton.addEventListener('click', function(){
+            itemModal.hide();
+        });
+
+    });
+    
+</script>
+
+{% endblock %}

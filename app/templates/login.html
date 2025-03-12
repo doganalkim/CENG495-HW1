@@ -1,0 +1,39 @@
+{% extends 'index.html' %}
+
+{% block header %}
+  <h1>{% block title %}Log In{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="d-flex justify-content-center align-items-center vh-100 " >
+  <form method="POST" class="border border-primary p-4  rounded border-5">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="username" name="username" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter Username">
+     
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password</label>
+      <input type="password"  name="password" class="form-control" id="password" placeholder="Password">
+      <small id="emailHelp" class="form-text text-muted">We'll never share your credentials with anyone else.</small>
+    </div>
+    <div>
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="text text-danger">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    </div>
+    <!-- <div class="form-group form-check">
+      <input type="checkbox" class="form-check-input" id="exampleCheck1">
+      <label class="form-check-label" for="exampleCheck1">Check me out</label>
+    </div> -->
+    <button type="submit" class="btn btn-primary mt-4">Log In</button>
+  </form>
+</div>
+
+{% endblock %}
