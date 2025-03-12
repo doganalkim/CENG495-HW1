@@ -24,7 +24,22 @@
 
     <div class="container mt-5 pt-2">
         <h2>Remove User</h2>
-        <form method="post" action="{{ url_for('main.delete_users') }}"">
+        <form method="post" action="{{ url_for('main.delete_users') }}">
+            {% for user in users %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="user_id" value="{{ user['_id'] }}" >
+                <label class="form-check-label" for="defaultCheck1">
+                    {{ user['username'] }}
+                </label>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-secondary mt-4">Delete</button>
+        </form>
+    </div>
+
+    <div class="container mt-5 pt-2">
+        <h2>Remove Item</h2>
+        <form method="post" action="{{ url_for('main.delete_users') }}">
             {% for user in users %}
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="user_id" value="{{ user['_id'] }}" >
@@ -81,6 +96,61 @@
                 <!-- <span aria-hidden="true">&times;</span> -->
             </div>
             <div class="modal-body">
+                <form method="post">
+                    <div class="form-group p-2">
+                      <label for="item_name">Item Name</label>
+                      <input type="text" name="item_name" class="form-control" id="item_name" placeholder="Nike, Adidas, etc.">
+                    </div>
+                    <div class="form-group p-2">
+                        <label for="description">Description of the Item</label>
+                        <textarea class="form-control" name="description" id="item_description" rows="5"></textarea>
+                    </div>
+                    <div class="form-group p-2">
+                        <label for="seller_name">Seller Name</label>
+                        <input type="text" name="seller_name" class="form-control" id="seller_name" placeholder="Company">
+                    </div>
+                    <div class="form-group p-2">
+                        <label for="item_photk">Example file input</label>
+                        <input type="file" name="item_photo" class="form-control-file" id="exampleFormControlFile1">
+                    </div>
+                    <!-- <div class="form-group p-2">
+                      <label for="item_type">Example select</label>
+                      <select class="form-control" id="item_type">
+                        <option>Vinyls</option>
+                        <option>Antique Furniture</option>
+                        <option>GPS Sport Watches</option>
+                        <option>Running Shoes</option>
+                      </select>
+                    </div> -->
+                    <div class="form-group p-2">
+                      <label for="item_type">Item Type</label>
+                      <select multiple class="form-control" id="item_type" name="item_type">
+                        <option>Vinyls</option>
+                        <option>Antique Furniture</option>
+                        <option>GPS Sport Watches</option>
+                        <option>Running Shoes</option>
+                      </select>
+                    </div>
+                    <div class="form-row  row p-2">
+                        <div class="form-group col-md-3">
+                            <label for="battery_life">Battery (h)</label>
+                            <input type="number" name="battery_life" class="form-control" id="battery_life">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="age">Age (year)</label>
+                            <input type="number" name="age" class="form-control" id="age">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="size">Size (EU)</label>
+                            <input type="number" name="size" class="form-control" id="size">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="material" >Material </label>
+                            <input type="text" name="material" class="form-control" id="material">
+                        </div>
+                      </div>
+                    <button type="submit" class="btn btn-primary m-2">Create</button>
+                  </form>
                 <div class="modal-footer">
                     <button id="closeAddItemModal" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
@@ -94,7 +164,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
 
-        // Get the button and modal by ID
         const addUserButton = document.getElementById('addUserButton');
         const addUsermodalElement = document.getElementById('addUserModalCenter');
         const closeAddUserButton = document.getElementById('closeAddUserModal');
@@ -124,6 +193,50 @@
         closeAddItemButton.addEventListener('click', function(){
             itemModal.hide();
         });
+
+
+        const variableInputElement = document.getElementById('item_type');
+        const batteryLifeInput = document.getElementById('battery_life');
+        const ageInput = document.getElementById('age');
+        const sizeInput = document.getElementById('size');
+        const materialInput = document.getElementById('material');
+
+        disableAll();
+
+        function disableAll(){
+            batteryLifeInput.disabled = true;
+            ageInput.disabled = true;
+            sizeInput.disabled = true;
+            materialInput.disabled = true;
+        }
+
+        variableInputElement.addEventListener('change', function() {
+            const selectedOptions = Array.from(variableInputElement.selectedOptions).map(option => option.value);
+            disableAll();
+            if( selectedOptions.length != 1 ){
+                alert("1 Item Type is allowed!");
+            }
+            else{
+                // alert(selectedOptions[0]); // works fine
+                selectedOption = selectedOptions[0];
+
+                if(selectedOption == "Vinyls"){
+                    ageInput.disabled = false;
+                }
+                else if(selectedOption == "GPS Sport Watches"){
+                    batteryLifeInput.disabled = false;
+                }   
+                else if(selectedOption == "Antique Furniture"){
+                    ageInput.disabled = false;
+                    materialInput.disabled = false;
+                }
+                else if(selectedOption == "Running Shoes"){
+                    sizeInput.disabled = false;
+                    materialInput.disabled = false;
+                }
+            }
+        });
+        
 
     });
     

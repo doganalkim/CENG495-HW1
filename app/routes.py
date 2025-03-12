@@ -10,6 +10,7 @@ auth  = Blueprint('auth', __name__)
 
 db = get_db()
 user_collection = db.users
+item_collection = db.items
 
 @bp.route('/')
 def index():
@@ -52,12 +53,17 @@ def login():
 @bp.route('/logout')
 def logout():
     session.clear()
+    session.pop('admin', None)
     session.pop('username', None)
     return redirect(url_for('main.index'))
 
 
 @bp.route('/admin-panel')
 def admin_panel():
+    is_admin = session.get('admin') 
+    if is_admin != True:
+        return  redirect(url_for('main.index'))
+
     all_users = user_collection.find()
     return render_template('admin_panel.html', users = all_users)
 
@@ -89,8 +95,7 @@ def delete_users():
     result = user_collection.delete_many({'_id':{'$in': selected_ids }})
 
     print(f'{result} users have been deleted!')
-    # for user in selected_users:
-    #     print(f'id:{user}')
+
 
     return redirect(url_for('main.admin_panel'))
 
