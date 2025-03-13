@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import check_password_hash, generate_password_hash
 from bson.objectid import ObjectId
 from .db import get_db
+import base64
 
 bp = Blueprint('main', __name__)
 
@@ -99,5 +100,76 @@ def delete_users():
 
     return redirect(url_for('main.admin_panel'))
 
+@bp.route('/add-item', methods = ['POST'])
+def add_item():
+    if request.method != 'POST':
+        return render_template('admin_panel.html')
 
+    item_name = request.form.get('item_name')
+    item_description = request.form.get('descriptipn')
+    item_seller = request.form.get('seller_name')
+    item_photo = request.files.get('item_photo')
+    item_photo_b64 = base64.b64encode(item_photo.read()).decode('utf-8')
+    item_type = request.form.get('item_type')
+
+    # <option>Vinyls</option>
+    # <option>Antique Furniture</option>
+    # <option>GPS Sport Watches</option>
+    # <option>Running Shoes</option>
+
+    if item_name == None or item_description == None or item_seller == None or item_photo_b64 == None or item_type == None:
+        return render_template('admin_panel.html')
+
+    if item_type == 'Vinyls':
+        age = request.form.get('age')
+
+        item_collection.insert_one(
+            {"name":item_name,
+            "description":item_description,
+            "seller":item_seller,
+            "photo":item_photo_b64,
+            "type": item_type,
+            "age": age
+        })
+
+    elif item_type == 'Antique Furniture':
+        age = request.form.get('age')
+        material = request.form.get('material')
+
+        item_collection.insert_one(
+            {"name":item_name,
+            "description":item_description,
+            "seller":item_seller,
+            "photo":item_photo_b64,
+            "type": item_type,
+            "age": age,
+            "material": material,
+        })
+    elif item_type == 'GPS Sport Watches':
+        battery_life = request.form.get('battery_life')
+
+        item_collection.insert_one(
+            {"name":item_name,
+            "description":item_description,
+            "seller":item_seller,
+            "photo":item_photo_b64,
+            "type": item_type,
+            "battery": battery_life
+        })
+    elif item_type == 'Running Shoes':
+        size = request.form.get('size')
+        material = request.form.get('material')
+
+        item_collection.insert_one(
+            {"name":item_name,
+            "description":item_description,
+            "seller":item_seller,
+            "photo":item_photo_b64,
+            "type": item_type,
+            "size": size,
+            "material": material
+        })
+    #print(f'item_received: {item_name} {item_photo_b64}')
+
+    return redirect(url_for('main.admin_panel'))
     
