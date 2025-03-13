@@ -15,7 +15,10 @@ item_collection = db.items
 
 @bp.route('/')
 def index():
-    return render_template('index.html')
+
+    all_items = item_collection.find()
+
+    return render_template('list.html', items = all_items )
 
 @bp.route('/login', methods = ['POST', 'GET'])
 def login():
@@ -106,7 +109,8 @@ def add_item():
         return render_template('admin_panel.html')
 
     item_name = request.form.get('item_name')
-    item_description = request.form.get('descriptipn')
+    item_price = request.form.get('item_price')
+    item_description = request.form.get('description')
     item_seller = request.form.get('seller_name')
     item_photo = request.files.get('item_photo')
     item_photo_b64 = base64.b64encode(item_photo.read()).decode('utf-8')
@@ -117,7 +121,14 @@ def add_item():
     # <option>GPS Sport Watches</option>
     # <option>Running Shoes</option>
 
-    if item_name == None or item_description == None or item_seller == None or item_photo_b64 == None or item_type == None:
+    # print(f'{item_name}')
+    # print(f'{item_description}')
+    # print(f'{item_seller}')
+    # print(f'{item_photo_b64}')
+    # print(f'{item_type}')
+
+    if item_name == None or item_price == None or item_description == None or item_seller == None or item_photo_b64 == None or item_type == None:
+        print(f'None Detected!')
         return render_template('admin_panel.html')
 
     if item_type == 'Vinyls':
@@ -125,6 +136,7 @@ def add_item():
 
         item_collection.insert_one(
             {"name":item_name,
+            "price": item_price,
             "description":item_description,
             "seller":item_seller,
             "photo":item_photo_b64,
@@ -132,12 +144,15 @@ def add_item():
             "age": age
         })
 
+        print(f'inserted Vinyls')
+
     elif item_type == 'Antique Furniture':
         age = request.form.get('age')
         material = request.form.get('material')
 
         item_collection.insert_one(
             {"name":item_name,
+            "price": item_price,
             "description":item_description,
             "seller":item_seller,
             "photo":item_photo_b64,
@@ -150,6 +165,7 @@ def add_item():
 
         item_collection.insert_one(
             {"name":item_name,
+            "price": item_price,
             "description":item_description,
             "seller":item_seller,
             "photo":item_photo_b64,
@@ -162,6 +178,7 @@ def add_item():
 
         item_collection.insert_one(
             {"name":item_name,
+            "price": item_price,
             "description":item_description,
             "seller":item_seller,
             "photo":item_photo_b64,
