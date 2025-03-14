@@ -44,7 +44,7 @@ def login():
             if user_data.get('admin'):
                 session['admin'] = True
 
-            return render_template('index.html')
+            return redirect(url_for('main.index'))
 
         else:
             print("check failed")
@@ -69,7 +69,9 @@ def admin_panel():
         return  redirect(url_for('main.index'))
 
     all_users = user_collection.find()
-    return render_template('admin_panel.html', users = all_users)
+    all_items = item_collection.find()
+
+    return render_template('admin_panel.html', users = all_users, items = all_items)
 
 @bp.route('/register', methods = ['POST'])
 def register():
@@ -100,6 +102,20 @@ def delete_users():
 
     print(f'{result} users have been deleted!')
 
+    return redirect(url_for('main.admin_panel'))
+
+@bp.route('/delete-items', methods=["POST"])
+def delete_items():
+    if request.method != 'POST':
+        return render_template('admin_panel.html')
+
+    selected_items = request.form.getlist('item_id')
+
+    selected_ids = [ObjectId(id) for id in selected_items]
+
+    result = item_collection.delete_many({'_id':{'$in': selected_ids}})
+
+    print(f'{result} items have been deleted!')
 
     return redirect(url_for('main.admin_panel'))
 
@@ -189,4 +205,15 @@ def add_item():
     #print(f'item_received: {item_name} {item_photo_b64}')
 
     return redirect(url_for('main.admin_panel'))
+    
+@bp.route('/item-detail', methods = ['GET'])
+def item_detail():
+    if request.method != 'GET':
+        return redirect(url_for('main.index'))
+    
+    item_id = request.args.get('item_id')
+
+    print(f'Request for {item_id}')
+
+    return redirect(url_for('main.index'))
     

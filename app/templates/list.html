@@ -18,12 +18,12 @@
                 <img class="card-img-top" src="data:image/png;base64,{{item['photo']}}" alt="Card image cap" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                   <h5 class="card-title"> {{item['name']}}</h5>
-                  <p class="card-text"> {{item['description']}}</p>
+                  <p class="card-text" style="width: 250px; height: 100px; overflow: hidden;"> {{item['description']}}</p>
                 </div>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">{{item['type']}} </li>
-                  <li class="list-group-item">Seller: {{item['seller']}}</li>
-                  <li class="list-group-item">Price: {{item['price']}} $</li>
+                  <li class="list-group-item"><strong>Seller:</strong> {{item['seller']}}</li>
+                  <li class="list-group-item"><strong>Price:</strong> {{item['price']}} $</li>
                 </ul>
                 <div class="container mt-2">
                     <div class="row">
@@ -47,7 +47,7 @@
 
                         {% if item['type']=="GPS Sport Watches" %}
                         <div class="col-sm">
-                            Batteri Life: {{item['battery_life']}}
+                            Batteri Life: {{item['battery']}}
                         </div>
                         {% endif %}
 
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                  <a href="#" class="card-link">Details</a>
+                  <a href="{{ url_for('main.item_detail', item_id = item['_id']) }}" class="card-link">Details</a>
                   <!-- <a href="#" class="card-link">Another link</a> -->
                 </div>
             </div>
