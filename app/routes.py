@@ -326,4 +326,12 @@ def categorize(item_category):
 
     return render_template('list.html', items = items)
 
+@bp.route("/search", methods = ['GET'])
+def search():
+    if request.method != 'GET':
+        return redirect(url_for('main.index'))
     
+    query = request.args.get('query')
+    items = item_collection.find({'name': {'$regex':query, "$options": "i" }})
+
+    return render_template('list.html', items = items)
