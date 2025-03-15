@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 from .db import get_db
 import base64
 from datetime import datetime
+import urllib.parse
 
 bp = Blueprint('main', __name__)
 
@@ -319,6 +320,8 @@ def profile():
 def categorize(item_category):
     if request.method != 'GET':
         return redirect(url_for('main.index'))
+
+    item_category =  urllib.parse.unquote(item_category)
 
     items = item_collection.find({'type': item_category})
 
