@@ -1,25 +1,25 @@
 {% extends 'index.html' %}
 
 {% block header %}
-  <h1>{% block title %}Log In{% endblock %}</h1>
+  <h1>{% block title %}Admin Panel{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 
-<div class="container vh-100">
+<div class="container vh-100 mb-3 pb-3">
     <ul class="list-group mt-5">
         <li class="list-group-item d-flex justify-content-center" id="addItemButton">
             <button class="btn btn-link "><a class="nav-link text-secondary" > Add Item</a></button>
         </li>
-        <li class="list-group-item d-flex justify-content-center" id="removeItemButton">
+        <!-- <li class="list-group-item d-flex justify-content-center" id="removeItemButton">
             <button class="btn btn-link"><a class="nav-link text-secondary" > RemoveItem</a></button>
-        </li>
+        </li> -->
         <li class="list-group-item d-flex justify-content-center" id="addUserButton">
             <button class="btn btn-link"><a class="nav-link text-secondary" > Add User</a></button>
         </li>
-        <li class="list-group-item d-flex justify-content-center" id="removeUserButton">
+        <!-- <li class="list-group-item d-flex justify-content-center" id="removeUserButton">
             <button class="btn btn-link"><a class="nav-link text-secondary" > Remove User</a></button>
-        </li>
+        </li> -->
     </ul>
 
     <div class="container mt-5 pt-2">
@@ -47,7 +47,7 @@
                 <span style="opacity: 0.6;">{{ item['description'] }}</span>
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-secondary mt-4">Delete</button>
+            <button type="submit" class="btn btn-secondary mt-4 mb-3">Delete</button>
         </form>
     </div>
 </div>

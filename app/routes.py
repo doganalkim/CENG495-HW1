@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from bson.objectid import ObjectId
 from .db import get_db
 import base64
+from datetime import datetime
 
 bp = Blueprint('main', __name__)
 
@@ -13,6 +14,7 @@ db = get_db()
 user_collection = db.users
 item_collection = db.items
 rate_collection = db.rates
+review_collection = db.reviews
 
 @bp.route('/')
 def index():
@@ -103,7 +105,10 @@ def delete_users():
 
     result = user_collection.delete_many({'_id':{'$in': selected_ids }})
 
-    print(f'{result} users have been deleted!')
+    #print(f'{result} users have been deleted!')
+
+    rate_collection.delete_many({'user_id': {'$in': selected_users} })
+    review_collection.delete_many({'user_id': {'$in': selected_users}})
 
     return redirect(url_for('main.admin_panel'))
 
@@ -119,6 +124,9 @@ def delete_items():
     result = item_collection.delete_many({'_id':{'$in': selected_ids}})
 
     print(f'{result} items have been deleted!')
+
+    rate_collection.delete_many({'item_id': {'$in': selected_items} })
+    review_collection.delete_many({'item_id': {'$in': selected_items}})
 
     return redirect(url_for('main.admin_panel'))
 
@@ -232,14 +240,15 @@ def item_detail():
     for rate in avg_rating_cursor:
         avg_rating = rate.get('average_rating',0)
 
-    print(f'AVG RATING: {avg_rating}')
+    #print(f'AVG RATING: {avg_rating}')
 
     avg_rating_percent = avg_rating * 10
 
     detailed_item = item_collection.find_one({'_id': ObjectId(item_id)})
 
+    reviews = review_collection.find({'item_id':item_id})
 
-    return render_template('item_details.html', item = detailed_item, rating = avg_rating, rating_percent = avg_rating_percent)
+    return render_template('item_details.html', item = detailed_item, rating = avg_rating, rating_percent = avg_rating_percent, reviews = reviews)
     
 @bp.route('/rate/<id>', methods = ['POST'])
 def rate_item(id):
@@ -260,4 +269,61 @@ def rate_item(id):
         rate_collection.insert_one({'user_id': user_id, 'item_id':id, 'rate': item_rate })
 
     return redirect(url_for('main.index'))
+
+@bp.route('/review/<id>', methods = ['POST'])
+def review(id):
+    if request.method != 'POST' or 'username' not in session:
+        return redirect(url_for('main.index'))
+
+    review = request.form.get('review')
+    user_id = session.get('user_id')
+    username = session.get('username')
+    current_date = datetime.now()
+
+    review_collection.insert_one({'user_id': user_id, 'item_id': id, 'review':review, 'date': current_date, 'username': username })
+
+    print(f'Comment: {review} for id: {id}')
+    return redirect(url_for('main.index'))
+
+@bp.route('/profile', methods = ['GET'])
+def profile():
+    if request.method != 'GET' or 'username' not in session:
+        return redirect(url_for('main.index'))
+
+    username = session.get('username')
+    user_id = session.get('user_id')
+    avg_rating = 0
+
+    aggregate_input = [
+        {"$match":{"user_id": user_id}},
+        {"$group": 
+            {
+                "_id":"$user_id",
+                "average_rating": {"$avg": "$rate"}
+            }
+        }
+    ]
+
+    avg_rating_cursor = rate_collection.aggregate(aggregate_input)
+
+    for rate in avg_rating_cursor:
+        avg_rating = rate.get('average_rating',0)
+
+    #print(f'AVG RATING: {avg_rating}')
+
+    my_reviews = review_collection.find({'user_id':user_id})
+    
+    return render_template('profile.html', username = username, rating = avg_rating, reviews = my_reviews)
+
+@bp.route("/categorize/<item_category>", methods = ['GET'])
+def categorize(item_category):
+    if request.method != 'GET':
+        return redirect(url_for('main.index'))
+
+    items = item_collection.find({'type': item_category})
+
+    print(f'category:{item_category}')
+
+    return render_template('list.html', items = items)
+
     
