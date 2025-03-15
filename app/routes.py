@@ -281,7 +281,7 @@ def review(id):
     username = session.get('username')
     current_date = datetime.now()
 
-    previous_review = rate_collection.find_one({'user_id':user_id, 'item_id':id})
+    previous_review = review_collection.find_one({'user_id':user_id, 'item_id':id})
 
     if previous_review:
         review_collection.update_one({'user_id': user_id, 'item_id': id,  'username': username }, {'$set':{'review':review, 'date':current_date}})
