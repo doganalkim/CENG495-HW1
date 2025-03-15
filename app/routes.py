@@ -281,7 +281,12 @@ def review(id):
     username = session.get('username')
     current_date = datetime.now()
 
-    review_collection.insert_one({'user_id': user_id, 'item_id': id, 'review':review, 'date': current_date, 'username': username })
+    previous_review = rate_collection.find_one({'user_id':user_id, 'item_id':id})
+
+    if previous_review:
+        review_collection.update_one({'user_id': user_id, 'item_id': id,  'username': username }, {'$set':{'review':review, 'date':current_date}})
+    else:
+        review_collection.insert_one({'user_id': user_id, 'item_id': id, 'review':review, 'date': current_date, 'username': username })
 
     print(f'Comment: {review} for id: {id}')
     return redirect(url_for('main.index'))
