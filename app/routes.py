@@ -261,15 +261,15 @@ def rate_item(id):
 
     previous_rate = rate_collection.find_one( {'user_id':user_id, 'item_id': id})
 
-    print(f'request for {id}')
-    print(f'Rate: {item_rate}')
+    # print(f'request for {id}')
+    # print(f'Rate: {item_rate}')
 
     if previous_rate:
         rate_collection.update_one({'user_id': user_id, 'item_id':id }, {'$set':{'rate':item_rate }})
     else:
         rate_collection.insert_one({'user_id': user_id, 'item_id':id, 'rate': item_rate })
 
-    return redirect(url_for('main.index'))
+    return redirect(request.referrer)
 
 @bp.route('/review/<id>', methods = ['POST'])
 def review(id):
@@ -288,8 +288,8 @@ def review(id):
     else:
         review_collection.insert_one({'user_id': user_id, 'item_id': id, 'review':review, 'date': current_date, 'username': username })
 
-    print(f'Comment: {review} for id: {id}')
-    return redirect(url_for('main.index'))
+    #print(f'Comment: {review} for id: {id}')
+    return redirect(request.referrer)
 
 @bp.route('/profile', methods = ['GET'])
 def profile():

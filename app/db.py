@@ -3,13 +3,9 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from os import getenv
 
-#db_password = "mROWJyCNfAshZUyl"
 
 db_password = getenv('MONGODB_PASS')
 
-#print(f'db pass: {db_password}')
-
-#uri = f'mongodb+srv://alkimdogan06:mROWJyCNfAshZUyl@cluster0.xvymk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 uri = f'mongodb+srv://alkimdogan06:{db_password}@cluster0.xvymk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 
 def get_db():
