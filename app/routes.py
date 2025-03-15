@@ -12,6 +12,7 @@ auth  = Blueprint('auth', __name__)
 db = get_db()
 user_collection = db.users
 item_collection = db.items
+rate_collection = db.rates
 
 @bp.route('/')
 def index():
@@ -39,6 +40,7 @@ def login():
         if user_data is not None and check_password_hash(user_data['password'], password):
 
             session['username'] = username
+            session['user_id'] = str(user_data['_id'])
             session['admin'] = False
 
             if user_data.get('admin'):
@@ -59,6 +61,7 @@ def logout():
     session.clear()
     session.pop('admin', None)
     session.pop('username', None)
+    session.pop('user_id', None)
     return redirect(url_for('main.index'))
 
 
@@ -208,12 +211,53 @@ def add_item():
     
 @bp.route('/item-detail', methods = ['GET'])
 def item_detail():
-    if request.method != 'GET':
+    if request.method != 'GET' or 'username' not in session:
         return redirect(url_for('main.index'))
     
     item_id = request.args.get('item_id')
 
-    print(f'Request for {item_id}')
+    avg_rating = 0
+    aggregate_input = [
+        {"$match":{"item_id": item_id}},
+        {"$group": 
+            {
+                "_id":"$item_id",
+                "average_rating": {"$avg": "$rate"}
+            }
+        }
+    ]
+
+    avg_rating_cursor = rate_collection.aggregate(aggregate_input)
+
+    for rate in avg_rating_cursor:
+        avg_rating = rate.get('average_rating',0)
+
+    print(f'AVG RATING: {avg_rating}')
+
+    avg_rating_percent = avg_rating * 10
+
+    detailed_item = item_collection.find_one({'_id': ObjectId(item_id)})
+
+
+    return render_template('item_details.html', item = detailed_item, rating = avg_rating, rating_percent = avg_rating_percent)
+    
+@bp.route('/rate/<id>', methods = ['POST'])
+def rate_item(id):
+    if request.method != 'POST' or 'username' not in session:
+        return redirect(url_for('main.index'))
+
+    item_rate = int(request.form['rate'])
+    user_id = session.get('user_id')
+
+    previous_rate = rate_collection.find_one( {'user_id':user_id, 'item_id': id})
+
+    print(f'request for {id}')
+    print(f'Rate: {item_rate}')
+
+    if previous_rate:
+        rate_collection.update_one({'user_id': user_id, 'item_id':id }, {'$set':{'rate':item_rate }})
+    else:
+        rate_collection.insert_one({'user_id': user_id, 'item_id':id, 'rate': item_rate })
 
     return redirect(url_for('main.index'))
     

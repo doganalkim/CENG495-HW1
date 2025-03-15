@@ -16,7 +16,7 @@
 
             <div class="card col-12 col-6 px-0  m-4 border-primary" style="width: 18rem;">
                 <img class="card-img-top" src="data:image/png;base64,{{item['photo']}}" alt="Card image cap" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
+                <div class="card-body" style="height: 250px;">
                   <h5 class="card-title"> {{item['name']}}</h5>
                   <p class="card-text" style="width: 250px; height: 100px; overflow: hidden;"> {{item['description']}}</p>
                 </div>
@@ -29,7 +29,7 @@
                     <div class="row">
                         {% if item['type']=="Running Shoes" %}
                         <div class="col-sm">
-                            Size: {{item['size']}}
+                            Size: {{item['size']}} (EU)
                         </div>
                         <div class="col-sm">
                             Material: {{item['material']}}
@@ -38,7 +38,7 @@
 
                         {% if item['type']=="Antique Furniture" %}
                         <div class="col-sm">
-                            Age: {{item['age']}}
+                            Age: {{item['age']}} (year)
                         </div>
                         <div class="col-sm">
                             Material: {{item['material']}}
@@ -47,13 +47,13 @@
 
                         {% if item['type']=="GPS Sport Watches" %}
                         <div class="col-sm">
-                            Batteri Life: {{item['battery']}}
+                            Batteri Life: {{item['battery']}} (h)
                         </div>
                         {% endif %}
 
                         {% if item['type']=="Vinyls" %}
                         <div class="col-sm">
-                            Age: {{item['age']}}
+                            Age: {{item['age']}} (year)
                         </div>
                         {% endif %}
                     </div>
