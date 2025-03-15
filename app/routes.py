@@ -31,7 +31,7 @@ def login():
         password = request.form['password']
 
         error = None
-
+            
         if username is None or password is None:
 
             error = "Provide credentials"
