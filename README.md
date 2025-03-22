@@ -56,7 +56,7 @@ You can login as the following users.
 I have chosen **Python** because It is the language I have used mostly in my internship, part time and academic career along with C and C++. I already had very limited Django and Flask experience. Thus, I decidede to move on with Flask considering that **PyMongo** is useful for **MongoDB**. 
 
 
-I think the website is very user friendly. 
+I think the website is very user friendly. One important issue is user cannot review and rate at the same time. Reviewing and rating are separated from each other. They are in a different HTML forms. Once review form or rate input is sent, page is refreshed. So, **send** button below them is just for one of them, not for both of them.
 
 - The **log in/out** button is located in the right-upper corner. After login process, the authorization distinction between test users and the admin is visible. **Admin Panel** is only reachable from admin accounts.
 - **Item/User addittion/deletion** is available from admin panel
